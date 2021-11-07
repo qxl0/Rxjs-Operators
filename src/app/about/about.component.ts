@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { concat, fromEvent, interval, merge, Observable, of, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { createHttpObservable } from '../common/util';
 
 @Component({
@@ -14,11 +14,16 @@ export class AboutComponent implements OnInit {
 
   ngOnInit() 
   {
-      const http$ = createHttpObservable('/api/courses');
-      const sub = http$.subscribe(console.log);
-
-      setTimeout(sub.unsubscribe, 0);
-
+      of(1, 2, 3, 4, 5).pipe(
+        map(n => {
+          if (n === 4) {
+            throw 'four!';
+          }
+        return n;
+        }),
+        catchError(err => of('I', 'II', 'III', 'IV', 'V')),
+      )
+  .subscribe(x => console.log(x));
   };
   
 }

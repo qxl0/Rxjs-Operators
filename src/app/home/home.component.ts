@@ -27,7 +27,10 @@ export class HomeComponent implements OnInit {
           finalize(() => console.log('HTTP request finalized')),
           tap(() => console.log('HTTP request executed')),
           map(res => Object.values(res['payload'])),
-          shareReplay()
+          shareReplay(),
+          retryWhen(errors => errors.pipe(
+            delayWhen(()=>timer(2000))
+          ))
         ) as any;
     }
 
